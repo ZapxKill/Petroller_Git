@@ -35,11 +35,11 @@ public class JudgementManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI judgementResultDisplay;
     [SerializeField] TextMeshProUGUI resultDisplay;
     [SerializeField] TextMeshProUGUI countDisplay;
-    public enum InputCommands { JoystickUp, JoystickDown, JoystickLeft, JoystickRight, Trigger, Grip, Stop }
-    private enum Commands { Ear, Tail, Lhand, Rhand, Pet, Squeeze, Stop }
+    public enum InputCommands { JoystickUp, JoystickDown, JoystickLeft, JoystickRight, Trigger, Grip }
 
     private string currentCommand = "";
-    [SerializeField] TextMeshProUGUI commandDisplay;
+    private int commandIndex = 0;
+    [SerializeField] Animator commandAnimator;
     private float timer = 0f;
 
     private void Awake() {
@@ -90,9 +90,14 @@ public class JudgementManager : MonoBehaviour
     private void nextCommand()
     {
         //Debug.Log("Next Command");
-        int commandIndex = UnityEngine.Random.Range(0, 7);
+        int tmp;
+        do
+        {
+            tmp = UnityEngine.Random.Range(0, 6);
+        } while (commandIndex == tmp);
+        commandIndex = tmp;
         currentCommand = Enum.GetName(typeof(InputCommands), commandIndex);
-        commandDisplay.text = Enum.GetName(typeof(Commands), commandIndex);
+        commandAnimator.SetInteger("index", commandIndex);
         StartCoroutine(JudgementCoroutine());
     }
 
@@ -109,16 +114,8 @@ public class JudgementManager : MonoBehaviour
         
         if (judgementResultDisplay.text == "")
         {
-            if (currentCommand == "Stop")
-            {
-                judgementResultDisplay.text = "Perfect";
-                judgementResults[0]++;
-            }
-            else
-            {
-                judgementResultDisplay.text = "Miss";
-                judgementResults[4]++;
-            }
+            judgementResultDisplay.text = "Miss";
+            judgementResults[4]++;
         }
         remainingjudgementTime = 0f;
         currentCommandAmount = 0;
@@ -135,6 +132,7 @@ public class JudgementManager : MonoBehaviour
     {
         isCooldown = true;
         remainingCooldownTime = cooldownTime;
+        commandAnimator.SetInteger("index", 6);
         //Debug.Log("Cool Down");
         while (remainingCooldownTime > 0f)
         {
@@ -158,7 +156,6 @@ public class JudgementManager : MonoBehaviour
         StopAllCoroutines();
         gameStarted = true;
         currentCommandAmount = 0;
-        commandDisplay.text = "Ready";
         judgementResults = new int[] {0, 0, 0, 0, 0};
         inputCounts = new int[] { 0, 0, 0, 0, 0, 0 };
         countDisplay.text = $"{currentCommandAmount} / {commandAmount}";
@@ -186,7 +183,7 @@ public class JudgementManager : MonoBehaviour
     }
     private void Start()
     {
-        //startGame();
+        startGame();
     }
     private void Update()
     {
