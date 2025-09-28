@@ -8,17 +8,17 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public CatAnimationControl playpressSE;
-    [Header("¶¥¬qª«¥ó")]
-    public GameObject[] stages; // ¦s©ñ¨C­Ó¶¥¬qªºª«¥ó
+    [Header("ï¿½ï¿½ï¿½qï¿½ï¿½ï¿½ï¿½")]
+    public GameObject[] stages; // ï¿½sï¿½ï¿½Cï¿½Ó¶ï¿½ï¿½qï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    private int currentStage = 0; // ·í«e¶¥¬q¯Á¤Þ (±q0¶}©l)
-    private int pressCount = 0;    // «öÀ£¦¸¼Æ­p¼Æ¾¹
-    public int requiredPresses; // ¨C¶¥¬q»Ý­nªº«öÀ£¦¸¼Æ
-    private bool isCooldown = false; // ¬O§_³B©ó§N«o¤¤
-    public float cooldownTime; // «ö¶s«öÀ£«áªº§N«o®É¶¡¡]¬í¡^
-    private float remainingCooldownTime; // ³Ñ¾l§N«o®É¶¡
+    private int currentStage = 0; // ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½qï¿½ï¿½ï¿½ï¿½ (ï¿½q0ï¿½}ï¿½l)
+    private int pressCount = 0;    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ­pï¿½Æ¾ï¿½
+    public int requiredPresses; // ï¿½Cï¿½ï¿½ï¿½qï¿½Ý­nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    private bool isCooldown = false; // ï¿½Oï¿½_ï¿½Bï¿½ï¿½Nï¿½oï¿½ï¿½
+    public float cooldownTime; // ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½áªºï¿½Nï¿½oï¿½É¶ï¿½ï¿½]ï¿½ï¿½ï¿½^
+    private float remainingCooldownTime; // ï¿½Ñ¾lï¿½Nï¿½oï¿½É¶ï¿½
 
-    // ¨C­Ó¿é¤J¨Ó·½ªº­p¼Æ¾¹
+    // ï¿½Cï¿½Ó¿ï¿½Jï¿½Ó·ï¿½ï¿½ï¿½ï¿½pï¿½Æ¾ï¿½
     private int joystickUpCount = 0;
     private int joystickDownCount = 0;
     private int joystickLeftCount = 0;
@@ -26,8 +26,8 @@ public class GameManager : MonoBehaviour
     private int triggerPressCount = 0;//UaDPress count
     private int gripPressCount = 0;//LaRPress count
 
-    private float timer = 0f; // ¥Î©ó­p®ÉªºÅÜ¼Æ
-    public float countdownTime = 5f; // ³]¸m­Ë¼Æ­p®É¬í¼Æ
+    private float timer = 0f; // ï¿½Î©ï¿½pï¿½Éªï¿½ï¿½Ü¼ï¿½
+    public float countdownTime = 5f; // ï¿½]ï¿½mï¿½Ë¼Æ­pï¿½É¬ï¿½ï¿½ï¿½
     public int final_stage_countdown;
 
     [SerializeField] private AudioClip transSceneSE;
@@ -44,11 +44,11 @@ public class GameManager : MonoBehaviour
     }
 
 
-    // ¼W¥[«öÀ£­p¼Æ
-    public void AddPress(string inputSource) {
-        if (isCooldown) return; // ¦pªG³B©ó§N«o®É¶¡¡A©¿²¤¿é¤J
+    // ï¿½Wï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½ï¿½
+    public virtual void AddPress(string inputSource) {
+        if (isCooldown) return; // ï¿½pï¿½Gï¿½Bï¿½ï¿½Nï¿½oï¿½É¶ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½J
 
-        // ®Ú¾Ú¿é¤J¨Ó·½¼W¥[­p¼Æ
+        // ï¿½Ú¾Ú¿ï¿½Jï¿½Ó·ï¿½ï¿½Wï¿½[ï¿½pï¿½ï¿½
         switch (inputSource)
         {
             case "JoystickUp":
@@ -73,9 +73,9 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        pressCount++; // ¼W¥[Á`­p¼Æ¦¸¼Æ
+        pressCount++; // ï¿½Wï¿½[ï¿½`ï¿½pï¿½Æ¦ï¿½ï¿½ï¿½
 
-        // ÀË¬d¬O§_¹F¨ì­n¨Dªº«öÀ£¦¸¼Æ
+        // ï¿½Ë¬dï¿½Oï¿½_ï¿½Fï¿½ï¿½nï¿½Dï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if ((currentStage == 0) && (gripPressCount >= requiredPresses))
         {
             SwitchToNextStage();
@@ -110,7 +110,7 @@ public class GameManager : MonoBehaviour
         {
             SwitchToNextStage();
             ResetCounter();
-            timer = 0f;// ­«¸m­p®É
+            timer = 0f;// ï¿½ï¿½ï¿½mï¿½pï¿½ï¿½
             //Debug.Log("Time Sec: "+ timer);
         }
         if (currentStage == 6 && timer >= final_stage_countdown)
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
         }
   
 
-        // ±Ò°Ê§N«o®É¶¡
+        // ï¿½Ò°Ê§Nï¿½oï¿½É¶ï¿½
         StartCoroutine(CooldownCoroutine());
     }
 
@@ -134,90 +134,90 @@ public class GameManager : MonoBehaviour
         pressCount = 0;
     }
 
-    //// ¥Î¨Ó¼W¥[«öÀ£¦¸¼Æ¨Ã¥B§ó·sÅÞ¿è
+    //// ï¿½Î¨Ó¼Wï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¨Ã¥Bï¿½ï¿½sï¿½Þ¿ï¿½
     //public void AddPress() {
-    //    // ÀË¬d¬O§_¦b§N«o¤¤
+    //    // ï¿½Ë¬dï¿½Oï¿½_ï¿½bï¿½Nï¿½oï¿½ï¿½
     //    if (isCooldown) return;
 
-    //    pressCount++; // ¼W¥[«öÀ£¦¸¼Æ
-    //    Debug.Log($"·í«e«öÀ£¦¸¼Æ¡G{pressCount}/{requiredPresses}");
+    //    pressCount++; // ï¿½Wï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //    Debug.Log($"ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡G{pressCount}/{requiredPresses}");
 
-    //    if (pressCount >= requiredPresses) // ¦pªG¹F¨ì­n¨Dªº«öÀ£¦¸¼Æ¡A¤Á´«¶¥¬q
+    //    if (pressCount >= requiredPresses) // ï¿½pï¿½Gï¿½Fï¿½ï¿½nï¿½Dï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q
     //    {
     //        SwitchToNextStage();
     //    }
 
-    //    // ¶}±Ò§N«o®É¶¡
+    //    // ï¿½}ï¿½Ò§Nï¿½oï¿½É¶ï¿½
     //    StartCoroutine(CooldownCoroutine());
     //}
 
-    // ¤Á´«¨ì¤U¤@¶¥¬q
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Uï¿½@ï¿½ï¿½ï¿½q
     public void SwitchToNextStage() {
         stages[currentStage].SetActive(false);
         currentStage++;
         stages[currentStage].SetActive(true);
-        ////pressCount = 0; // Âk¹s­p¼Æ¾¹
+        ////pressCount = 0; // ï¿½kï¿½sï¿½pï¿½Æ¾ï¿½
         if (currentStage >= stages.Length)
         {
-            Debug.Log("¤w¹F¨ì³Ì¤j¶¥¬q¡AµLªk¦A¤Á´«¡I");
+            Debug.Log("ï¿½wï¿½Fï¿½ï¿½Ì¤jï¿½ï¿½ï¿½qï¿½Aï¿½Lï¿½kï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½I");
             return;
         }
-        //// ÁôÂÃ·í«e¶¥¬qªºª«¥ó
+        //// ï¿½ï¿½ï¿½Ã·ï¿½ï¿½eï¿½ï¿½ï¿½qï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         //if (currentStage < stages.Length && stages[currentStage] != null)
         //{
-        //    stages[currentStage].SetActive(false);  // ÁôÂÃ·í«e¶¥¬qª«¥ó
+        //    stages[currentStage].SetActive(false);  // ï¿½ï¿½ï¿½Ã·ï¿½ï¿½eï¿½ï¿½ï¿½qï¿½ï¿½ï¿½ï¿½
         //}
         //currentStage++;
-        //// Åã¥Ü¤U¤@¶¥¬qªºª«¥ó
+        //// ï¿½ï¿½Ü¤Uï¿½@ï¿½ï¿½ï¿½qï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         //if (currentStage < stages.Length && stages[currentStage] != null)
         //{
         //    stages[currentStage].SetActive(true);
         //}
 
-        // ¶i¤J¤U¤@¶¥¬q¡A­p¼Æ¾¹Âk¹s
+        // ï¿½iï¿½Jï¿½Uï¿½@ï¿½ï¿½ï¿½qï¿½Aï¿½pï¿½Æ¾ï¿½ï¿½kï¿½s
 
-        Debug.Log($"¤Á´«¨ì¶¥¬q {currentStage}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ì¶¥ï¿½q {currentStage}");
     }
 
-    // §N«o¨óµ{¡A±±¨î§N«o®É¶¡
+    // ï¿½Nï¿½oï¿½ï¿½{ï¿½Aï¿½ï¿½ï¿½ï¿½Nï¿½oï¿½É¶ï¿½
     private IEnumerator CooldownCoroutine() {
-        isCooldown = true; // ³]©w¬°§N«o¤¤
-        remainingCooldownTime = cooldownTime; // ªì©l¤Æ³Ñ¾l§N«o®É¶¡
+        isCooldown = true; // ï¿½]ï¿½wï¿½ï¿½ï¿½Nï¿½oï¿½ï¿½
+        remainingCooldownTime = cooldownTime; // ï¿½ï¿½lï¿½Æ³Ñ¾lï¿½Nï¿½oï¿½É¶ï¿½
 
-        while (remainingCooldownTime > 0) // ·í§N«o®É¶¡¤j©ó 0 ®É
+        while (remainingCooldownTime > 0) // ï¿½ï¿½ï¿½Nï¿½oï¿½É¶ï¿½ï¿½jï¿½ï¿½ 0 ï¿½ï¿½
         {
-            remainingCooldownTime -= Time.deltaTime; // ´î¤Ö³Ñ¾l§N«o®É¶¡
-            yield return null; // µ¥«Ý¤U¤@´V
+            remainingCooldownTime -= Time.deltaTime; // ï¿½ï¿½Ö³Ñ¾lï¿½Nï¿½oï¿½É¶ï¿½
+            yield return null; // ï¿½ï¿½ï¿½Ý¤Uï¿½@ï¿½V
         }
 
-        isCooldown = false; // §N«o®É¶¡µ²§ô
-        remainingCooldownTime = 0; // §N«o®É¶¡Âk¹s
+        isCooldown = false; // ï¿½Nï¿½oï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½
+        remainingCooldownTime = 0; // ï¿½Nï¿½oï¿½É¶ï¿½ï¿½kï¿½s
     }
        
-        // §ó·s¨C´Vªº³Ñ¾l®É¶¡¦^³ø
+        // ï¿½ï¿½sï¿½Cï¿½Vï¿½ï¿½ï¿½Ñ¾lï¿½É¶ï¿½ï¿½^ï¿½ï¿½
         private void Update() {
         if (isCooldown)
         {
-            //Debug.Log($"³Ñ¾l§N«o®É¶¡¡G{remainingCooldownTime:F0}¬í"); // ¿é¥X³Ñ¾l§N«o®É¶¡
+            //Debug.Log($"ï¿½Ñ¾lï¿½Nï¿½oï¿½É¶ï¿½ï¿½G{remainingCooldownTime:F0}ï¿½ï¿½"); // ï¿½ï¿½Xï¿½Ñ¾lï¿½Nï¿½oï¿½É¶ï¿½
         }
-        //Debug.Log("¥Ø«e¶¥¬q" + currentStage + "," + "¥Ø«e«öÀ£" + pressCount);
+        //Debug.Log("ï¿½Ø«eï¿½ï¿½ï¿½q" + currentStage + "," + "ï¿½Ø«eï¿½ï¿½ï¿½ï¿½" + pressCount);
 
 
-        timer += Time.deltaTime; // ¨C´V²Ö¥[®É¶¡
+        timer += Time.deltaTime; // ï¿½Cï¿½Vï¿½Ö¥[ï¿½É¶ï¿½
         //Debug.Log(timer);
         //if (timer == 30)
         //{
         //    Debug.Log(timer);
         //}
-        //if (timer >= countdownTime) // §PÂ_­p®É¬O§_µ²§ô
+        //if (timer >= countdownTime) // ï¿½Pï¿½_ï¿½pï¿½É¬Oï¿½_ï¿½ï¿½ï¿½ï¿½
         //{
-        //    Debug.Log("®É¶¡¨ì¡I");
-        //    timer = 0f; // ­«¸m­p®É
+        //    Debug.Log("ï¿½É¶ï¿½ï¿½ï¿½I");
+        //    timer = 0f; // ï¿½ï¿½ï¿½mï¿½pï¿½ï¿½
         //}
 
     }
 
-    //// Àò¨ú¨C­Ó¤è¦Vªº«öÀ£¦¸¼Æ
+    //// ï¿½ï¿½ï¿½ï¿½Cï¿½Ó¤ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     //public int GetJoystickUpCount() {
     //    return joystickUpCount;
     //}

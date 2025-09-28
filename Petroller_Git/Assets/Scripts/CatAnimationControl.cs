@@ -21,7 +21,7 @@ public class CatAnimationControl : MonoBehaviour
     public Animator cat_cube;
     //[Range(0f, 1f)] public float CubeAni = 0f;  // 動態控制進度
 
-    public GameManager gameManager;
+    public JudgementManager gameManager;
     public float originThreshold;//原點
     public float innerThreshold;//內圈=靜止
     public float outerThreshold;//外圈=左右手
@@ -55,6 +55,7 @@ public class CatAnimationControl : MonoBehaviour
     public GameObject CatFace;
     private Vector3 scaleZ, scaleX;
     private float press_trigger, press_grip, pull_joystick_x, pull_joystick_y;
+    private bool isholdingTrigger, isholdingGrip = false;
  
     //[Header("擠壓程度")]
     //public float squeezeX, squeezeZ = 1;
@@ -141,7 +142,7 @@ public class CatAnimationControl : MonoBehaviour
         }else{
             PerformActionBasedOnZone(currentZone);
         }
-            // if(){
+        // if(){
         //     cat_cube.SetFloat("UPPull",y);
         //     Debug.Log("cat_cube"+cat_cube);
         // }
@@ -152,24 +153,28 @@ public class CatAnimationControl : MonoBehaviour
 
         ///////Back and Front Squeeze Detect
         //press_trigger = OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger);
-       // scaleZ = new Vector3(1.0f, 1.0f, 1.0f);
-        if (press_trigger > 0){
+        // scaleZ = new Vector3(1.0f, 1.0f, 1.0f);
+        if (press_trigger > 0 && !isholdingTrigger)
+        {
             //scaleZ = new Vector3(1.0f, 1.0f, 1 - press_trigger*squeezeZ);
-            // Debug.Log("Trigger :" + press_trigger);
-            CatFace.transform.localScale = scaleZ;
-            PlayPressUaDSE();
+
+            //CatFace.transform.localScale = scaleZ;
+            //PlayPressUaDSE();
             //Debug.Log("播放: PlayPressUaDSE");
-            cat_cube.SetFloat("UDPress",press_trigger);
-            GameManager.Instance.AddPress("Trigger");
+            //cat_cube.SetFloat("UDPress", press_trigger);
+            //JudgementManager.Instance.AddPress("Trigger");
+            //GameManager.Instance.AddPress("Trigger");
             //if (press_trigger == 1)
             //    GameManager.Instance.MoveToNextStage(); // 通知 GameManager
 
             //OVRInput.SetControllerVibration(freq, amp, OVRInput.Controller.RTouch);
             //OVRInput.SetControllerVibration(freq, amp, OVRInput.Controller.LTouch);
+            StartCoroutine(TriggerHandler());
         }
-        else{
-            cat_cube.SetFloat("UDPress",0);
-        }
+        // else
+        // {
+        //     cat_cube.SetFloat("UDPress", 0);
+        // }
         
         triggerStatusText.text = press_trigger.ToString();
         
@@ -181,19 +186,19 @@ public class CatAnimationControl : MonoBehaviour
         ///////Left and Right Squeeze Detect
         //press_grip = OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger);
        // scaleX = new Vector3(1.0f, 1.0f, 1.0f);
-        if (press_grip > 0){
+        if (press_grip > 0 && !isholdingGrip){
             //scaleX = new Vector3(1 - press_grip*squeezeX, 1.0f, 1.0f);
             //Debug.Log("Grip :" + press_grip);
-            CatFace.transform.localScale = scaleX;
-            cat_cube.SetFloat("LRPress",press_grip);
-            PlayPressLaRSE();
-            Debug.Log("播放: PlayPressLaRSE");
-            GameManager.Instance.AddPress("Grip");
- 
+            //CatFace.transform.localScale = scaleX;
+            //cat_cube.SetFloat("LRPress",press_grip);
+            //PlayPressLaRSE();
+            //Debug.Log("播放: PlayPressLaRSE");
+            //JudgementManager.Instance.AddPress("Grip");
+            StartCoroutine(GripHandler());
         }
-        else{
-            cat_cube.SetFloat("LRPress",0);
-        }
+        // else{
+        //     cat_cube.SetFloat("LRPress",0);
+        // }
         gripStatusText.text = press_grip.ToString();
         //gripSlider.value = press_grip;
 
@@ -272,6 +277,41 @@ public class CatAnimationControl : MonoBehaviour
 
 
     }
+    private IEnumerator GripHandler()
+    {
+        isholdingGrip = true;
+        PlayPressLaRSE();
+        //Debug.Log("播放: PlayPressLaRSE");
+        JudgementManager.Instance.AddPress("Grip");
+        while (press_grip > 0)
+        {
+            Debug.Log("Grip :" + press_grip);
+            cat_cube.SetFloat("LRPress", press_grip);
+            yield return null;
+        }
+        cat_cube.SetFloat("LRPress", 0.0f);
+        isholdingGrip = false;
+        yield break;
+    }
+    private IEnumerator TriggerHandler()
+    {
+        isholdingTrigger = true;
+        PlayPressUaDSE();
+        //Debug.Log("播放: PlayPressUaDSE");
+        JudgementManager.Instance.AddPress("Trigger");
+        while (press_trigger > 0)
+        {
+            Debug.Log("Trigger :" + press_trigger);
+            cat_cube.SetFloat("UDPress", press_trigger);
+            yield return null;
+        }
+        cat_cube.SetFloat("UDPress", 0.0f);
+        isholdingTrigger = false;
+        yield break;
+    }
+
+
+
     void PerformActionBasedOnZone(JoystickZone zone)
     {
         switch (zone)
@@ -291,22 +331,22 @@ public class CatAnimationControl : MonoBehaviour
             case JoystickZone.Up:
                 // Debug.Log("搖桿在上區域：拉耳朵");
                 PullEar();
-                GameManager.Instance.AddPress("JoystickUp");
+                JudgementManager.Instance.AddPress("JoystickUp");
                 break;
             case JoystickZone.Down:
                 // Debug.Log("搖桿在下區域：拉尾巴");
                 PullTail();
-                GameManager.Instance.AddPress("JoystickDown");
+                JudgementManager.Instance.AddPress("JoystickDown");
                 break;
             case JoystickZone.Left:
                 // Debug.Log("搖桿在左區域：拉左手");
                 PullLeftHand();
-                GameManager.Instance.AddPress("JoystickLeft");
+                JudgementManager.Instance.AddPress("JoystickLeft");
                 break;
             case JoystickZone.Right:
                 // Debug.Log("搖桿在右區域：拉右手");
                 PullRightHand();
-                GameManager.Instance.AddPress("JoystickRight");
+                JudgementManager.Instance.AddPress("JoystickRight");
                 break;
             default:
                 // Debug.Log("未知區域");
