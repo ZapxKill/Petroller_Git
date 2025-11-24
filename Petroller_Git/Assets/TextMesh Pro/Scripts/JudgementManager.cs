@@ -70,6 +70,8 @@ public class JudgementManager : MonoBehaviour
     private int commandIndex = 0;
     private float completePercent = 0;
     [SerializeField] Animator commandAnimator;
+    [SerializeField] ControllerFollower controllerFollower;
+    [SerializeField] GameObject commandImage;
     private float timer = 0f;
 
     private void Awake() {
@@ -133,6 +135,15 @@ public class JudgementManager : MonoBehaviour
         } while (commandIndex == tmp);
         commandIndex = tmp;
         currentCommand = Enum.GetName(typeof(InputCommands), commandIndex);
+        if(controllerFollower.useController)
+        {
+            commandImage.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+        }
+        else
+        {
+            commandImage.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+        }
+        commandAnimator.SetBool("conAni", controllerFollower.useController);
         commandAnimator.SetInteger("index", commandIndex);
         bubbleUI.SetActive(true);
         StartCoroutine(JudgementCoroutine());
@@ -260,7 +271,7 @@ public class JudgementManager : MonoBehaviour
         {
             Directory.CreateDirectory(recordPath);
         }
-        //startGame();
+        startGame();
     }
     private void Update()
     {

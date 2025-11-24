@@ -6,6 +6,7 @@ public class ControllerFollower : MonoBehaviour
 {
     public OVRInput.Controller targetController;
     public bool PcMode = false;
+    public bool useController = false;
     [SerializeField] Camera PcCamera;
     [SerializeField] Camera VrCamera;
     public bool autoInitializeModel;
@@ -21,7 +22,7 @@ public class ControllerFollower : MonoBehaviour
         if(autoInitializeModel)
             modelTransform.position = model_initialPos;
             modelTransform.rotation = Quaternion.Euler(model_initialRot);
-        lastKnownPosition = transform.position;
+            lastKnownPosition = transform.position;
         if (PcMode)
         {
             PcCamera.enabled = true;
